@@ -1,0 +1,74 @@
+{
+  "stops": {
+    "pickwick": {
+      "title": "Pickwick Theatre",
+      "donate_url": "https://example.org/donate",
+      "sponsor_about_url": "https://example.org/sponsor/about",
+      "vantage_hint": "Stand on the brass dot near the curb and try 2\u00d7 zoom for best alignment.",
+      "files": {
+        "overlay": "assets/stops/pickwick/overlay.jpg",
+        "sponsor_logo": "assets/stops/pickwick/sponsor_logo.png",
+        "avatar_poster": "assets/stops/pickwick/avatar_poster.png",
+        "avatar_alpha_webm": "assets/stops/pickwick/sponsor_avatar_alpha.webm",
+        "avatar_alpha_mov": "assets/stops/pickwick/sponsor_avatar_alpha.mov",
+        "avatar_mp4": "assets/stops/pickwick/sponsor_avatar.mp4"
+      }
+    },
+    "hodges": {
+      "title": "Hodges Park",
+      "donate_url": "https://example.org/donate",
+      "sponsor_about_url": "https://example.org/sponsor/about",
+      "vantage_hint": "Face City Hall from the center path marker; align to the fa\u00e7ade arches.",
+      "files": {
+        "overlay": "assets/stops/hodges/overlay.jpg",
+        "sponsor_logo": "assets/stops/hodges/sponsor_logo.png",
+        "avatar_poster": "assets/stops/hodges/avatar_poster.png",
+        "avatar_alpha_webm": "assets/stops/hodges/sponsor_avatar_alpha.webm",
+        "avatar_alpha_mov": "assets/stops/hodges/sponsor_avatar_alpha.mov",
+        "avatar_mp4": "assets/stops/hodges/sponsor_avatar.mp4"
+      }
+    },
+    "depot": {
+      "title": "Park Ridge Train Station",
+      "donate_url": "https://example.org/donate",
+      "sponsor_about_url": "https://example.org/sponsor/about",
+      "vantage_hint": "Stand by the east entrance; align roofline and chimney.",
+      "files": {
+        "overlay": "assets/stops/depot/overlay.jpg",
+        "sponsor_logo": "assets/stops/depot/sponsor_logo.png",
+        "avatar_poster": "assets/stops/depot/avatar_poster.png",
+        "avatar_alpha_webm": "assets/stops/depot/sponsor_avatar_alpha.webm",
+        "avatar_alpha_mov": "assets/stops/depot/sponsor_avatar_alpha.mov",
+        "avatar_mp4": "assets/stops/depot/sponsor_avatar.mp4"
+      }
+    },
+    "library": {
+      "title": "Original Library Building",
+      "donate_url": "https://example.org/donate",
+      "sponsor_about_url": "https://example.org/sponsor/about",
+      "vantage_hint": "Stand 30 ft back from the steps; align columns and pediment.",
+      "files": {
+        "overlay": "assets/stops/library/overlay.jpg",
+        "sponsor_logo": "assets/stops/library/sponsor_logo.png",
+        "avatar_poster": "assets/stops/library/avatar_poster.png",
+        "avatar_alpha_webm": "assets/stops/library/sponsor_avatar_alpha.webm",
+        "avatar_alpha_mov": "assets/stops/library/sponsor_avatar_alpha.mov",
+        "avatar_mp4": "assets/stops/library/sponsor_avatar.mp4"
+      }
+    },
+    "pantry": {
+      "title": "The Pantry",
+      "donate_url": "https://example.org/donate",
+      "sponsor_about_url": "https://example.org/sponsor/about",
+      "vantage_hint": "Stand across the street; match window spacing and cornice line.",
+      "files": {
+        "overlay": "assets/stops/pantry/overlay.jpg",
+        "sponsor_logo": "assets/stops/pantry/sponsor_logo.png",
+        "avatar_poster": "assets/stops/pantry/avatar_poster.png",
+        "avatar_alpha_webm": "assets/stops/pantry/sponsor_avatar_alpha.webm",
+        "avatar_alpha_mov": "assets/stops/pantry/sponsor_avatar_alpha.mov",
+        "avatar_mp4": "assets/stops/pantry/sponsor_avatar.mp4"
+      }
+    }
+  }
+}

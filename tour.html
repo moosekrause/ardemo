@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>PRHS Walking Tour — Then & Now WebAR</title>
+  <meta name="description" content="Park Ridge Historical Society • Then & Now AR walking tour" />
+  <style>
+    :root{
+      --ui-bg: rgba(17,17,17,0.65);
+      --ui-text:#fff;
+      --accent:#ffd166;
+      --btn:#222;
+    }
+    html,body{height:100%;margin:0;background:#000;color:#fff;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
+    #app{position:fixed;inset:0;overflow:hidden;background:#000}
+    #video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(1)}
+    #overlayImg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(1) rotate(0deg);touch-action:none;user-select:none;pointer-events:auto;opacity:.6;max-width:none;width:80vw;height:auto}
+    #avatarWrap{position:absolute;bottom:112px;right:16px;width:min(330px,38vw);z-index:6}
+    #avatar{width:100%;height:auto;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.4);background:transparent}
+    #unmute{position:absolute;inset:auto 8px 8px auto;background:var(--accent);color:#222;border:none;border-radius:12px;padding:8px 10px;font-weight:700}
+    #topbar{position:absolute;top:10px;left:10px;right:10px;display:flex;gap:10px;align-items:center;justify-content:space-between;z-index:8}
+    #hint{background:var(--ui-bg);backdrop-filter:blur(6px);border-radius:12px;padding:8px 12px;max-width:min(60vw,560px)}
+    #badge{background:var(--ui-bg);backdrop-filter:blur(6px);border-radius:16px;padding:10px 12px;display:flex;gap:10px;align-items:center}
+    #sponsorLogo{height:40px;max-width:120px;object-fit:contain}
+    #prhsLogo{height:40px;max-width:120px;object-fit:contain}
+    .cta{display:inline-block;background:var(--accent);color:#111;font-weight:800;border-radius:10px;padding:8px 10px;text-decoration:none;margin-left:6px}
+    #controls{position:absolute;left:0;right:0;bottom:0;padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.55))}
+    .pill{display:flex;gap:8px;align-items:center;background:var(--ui-bg);backdrop-filter:blur(6px);padding:8px 10px;border-radius:14px}
+    .btn{background:var(--btn);color:#fff;border:none;border-radius:10px;padding:10px 12px;font-weight:700}
+    input[type="range"]{accent-color:var(--accent)}
+    label{font-size:12px;color:#ddd}
+    #error{position:absolute;inset:0;display:none;place-items:center;padding:32px;text-align:center;background:#111;color:#fff}
+    #picker{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.8);z-index:9}
+    #pickerCard{background:#111;border:1px solid #333;border-radius:14px;padding:16px;max-width:min(92vw,560px)}
+    select, option{font-size:16px;padding:8px;border-radius:10px;border:1px solid #333;background:#1a1a1a;color:#fff}
+    @media (max-width:520px){#avatarWrap{bottom:120px;width:56vw} #hint{max-width:72vw}}
+    a, a:visited { color: #ffd166; }
+  </style>
+</head>
+<body>
+  <div id="app" role="application" aria-label="PRHS Then & Now AR">
+    <video id="video" playsinline autoplay muted></video>
+    <img id="overlayImg" alt="Historic overlay" src=""/>
+    <div id="avatarWrap" aria-live="polite">
+      <video id="avatar" playsinline preload="metadata" muted poster="">
+        <source id="src_webm" src="" type="video/webm" />
+        <source id="src_mov" src="" type="video/quicktime" />
+        <source id="src_mp4" src="" type="video/mp4" />
+      </video>
+      <button id="unmute" aria-label="Tap to unmute">Tap for sound</button>
+    </div>
+
+    <div id="topbar">
+      <div id="hint">Tip: Pinch/drag the historic photo to align with the façade. <span id="vantage"></span></div>
+      <div id="badge">
+        <img id="sponsorLogo" src="" alt="Sponsor logo"/>
+        <a id="sponsorAbout" class="cta" href="#" target="_blank" rel="noopener">About us</a>
+        <img id="prhsLogo" src="assets/prhs_logo.png" alt="Park Ridge Historical Society" style="margin-left:8px"/>
+        <a id="donate" class="cta" href="#" target="_blank" rel="noopener">Donate</a>
+      </div>
+    </div>
+
+    <div id="controls">
+      <div class="pill" title="Opacity">
+        <label for="opacity">Overlay</label>
+        <input id="opacity" type="range" min="0" max="1" step="0.01" value="0.6" />
+      </div>
+      <div class="pill" title="Rotate">
+        <label for="rotate">Rotate</label>
+        <input id="rotate" type="range" min="-15" max="15" step="0.1" value="0" />
+      </div>
+      <div class="pill" title="Reset">
+        <button class="btn" id="reset">Reset</button>
+        <button class="btn" id="flip">Flip H</button>
+        <button class="btn" id="toggleAvatar">Play/Pause Avatar</button>
+        <button class="btn" id="chooseStop">Choose Site</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="error"><div>
+    <h2>Camera unavailable</h2>
+    <p>We couldn’t access your camera. Please check browser permissions and reload this page, or open it in Safari (iOS) or Chrome (Android).</p>
+  </div></div>
+
+  <div id="picker">
+    <div id="pickerCard">
+      <h3>Select a site</h3>
+      <p>Pick a stop to load its historic overlay and sponsor greeting.</p>
+      <select id="siteSelect"></select>
+      <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn" id="pickerCancel">Cancel</button>
+        <button class="btn" id="pickerGo">Go</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const errorBox = document.getElementById('error');
+    const overlay = document.getElementById('overlayImg');
+    const vantageSpan = document.getElementById('vantage');
+    const sponsorLogo = document.getElementById('sponsorLogo');
+    const sponsorAbout = document.getElementById('sponsorAbout');
+    const donate = document.getElementById('donate');
+    const avatar = document.getElementById('avatar');
+    const src_webm = document.getElementById('src_webm');
+    const src_mov  = document.getElementById('src_mov');
+    const src_mp4  = document.getElementById('src_mp4');
+    const unmute = document.getElementById('unmute');
+
+    const showError = (msg) => {
+      const httpsHint = (!window.isSecureContext) ? `<li><strong>Open over HTTPS</strong>. Camera requires a secure page. Use Netlify/GitHub Pages or a https dev tunnel. Local <code>http://localhost</code> also works.</li>` : '';
+      errorBox.innerHTML = `<div>
+        <h2>Camera unavailable</h2>
+        <p>${msg}</p>
+        <ol style="text-align:left;line-height:1.5">
+          ${httpsHint}
+          <li><strong>Use Safari (iPhone)</strong>. If you opened from Messages/Instagram/Facebook, tap the ••• menu → <em>Open in Safari</em>.</li>
+          <li><strong>Allow camera</strong>: In Safari, tap the <em>aA</em> icon → <em>Website Settings</em> → <em>Camera: Allow</em>, then reload.</li>
+          <li><strong>System check</strong>: Settings → Privacy & Security → <em>Camera</em> → make sure <em>Safari</em> is allowed. Also Settings → Safari → <em>Camera</em> → Allow.</li>
+          <li><strong>Screen Time</strong>: If enabled, ensure <em>Camera</em> is allowed (Allowed Apps).</li>
+          <li><strong>Close other apps</strong> that may be using the camera, then try again. If needed, restart the device.</li>
+        </ol>
+      </div>`;
+      errorBox.style.display = 'grid';
+    };
+
+    async function startCamera(){
+      try{
+        if(!('mediaDevices' in navigator) || !('getUserMedia' in navigator.mediaDevices)){
+          throw new Error('This browser does not support camera access via the web. Try Safari on iOS 15+ or Chrome on Android.');
+        }
+        if(!window.isSecureContext){
+          throw new Error('This page is not secure. Use HTTPS (or localhost) to enable the camera.');
+        }
+        const attempts = [
+          { video: { facingMode: { ideal: 'environment' } }, audio: false },
+          { video: { facingMode: 'environment' }, audio: false },
+          { video: { facingMode: 'user' }, audio: false },
+          { video: true, audio: false }
+        ];
+        let stream = null, lastErr = null;
+        for(const c of attempts){
+          try { stream = await navigator.mediaDevices.getUserMedia(c); break; }
+          catch(err){ lastErr = err; }
+        }
+        if(!stream){ throw lastErr || new Error('Unable to start camera.'); }
+        video.srcObject = stream;
+        await video.play().catch(()=>{});
+      }catch(e){
+        console.error('Camera error', e);
+        let friendly = 'We could not access your camera.';
+        if(e && e.name === 'NotAllowedError') friendly = 'Permission was denied. Please allow camera access for this site.';
+        if(e && e.name === 'NotFoundError') friendly = 'No camera found or it is in use. Close other apps and try again.';
+        if(e && e.name === 'NotReadableError') friendly = 'Your camera is in use by another app. Close other apps or restart the device.';
+        if(e && e.name === 'OverconstrainedError') friendly = 'Your device could not satisfy the camera constraints. Try the front camera or a different browser.';
+        if(e && e.message && e.message.includes('secure')) friendly = e.message;
+        showError(friendly);
+      }
+    }
+    startCamera();
+
+    // Manual overlay transforms
+    let state = {x:0,y:0,scale:1,rot:0,originX:0,originY:0,active:false,pointers:new Map(),baseDist:0,baseScale:1};
+    const apply = ()=>{
+      overlay.style.transform = `translate(calc(-50% + ${state.x}px), calc(-50% + ${state.y}px)) scale(${state.scale}) rotate(${state.rot}deg)`;
+    };
+    const onPointerDown = (e)=>{
+      overlay.setPointerCapture(e.pointerId); state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY}); state.active=true;
+      if(state.pointers.size===2){
+        const [a,b] = [...state.pointers.values()];
+        state.baseDist = Math.hypot(a.x-b.x, a.y-b.y); state.baseScale = state.scale;
+      }
+    };
+    const onPointerMove = (e)=>{
+      if(!state.active) return; if(!state.pointers.has(e.pointerId)) return;
+      const prev = state.pointers.get(e.pointerId); const dx=e.clientX-prev.x, dy=e.clientY-prev.y;
+      state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+      if(state.pointers.size===1){ state.x += dx; state.y += dy; apply(); }
+      if(state.pointers.size===2){
+        const [a,b] = [...state.pointers.values()];
+        const dist = Math.hypot(a.x-b.x, a.y-b.y);
+        const ratio = dist / (state.baseDist || dist);
+        state.scale = Math.max(0.2, Math.min(6, state.baseScale * ratio));
+        apply();
+      }
+    };
+    const onPointerUp = (e)=>{ state.pointers.delete(e.pointerId); if(state.pointers.size===0) state.active=false; };
+    overlay.addEventListener('pointerdown', onPointerDown);
+    overlay.addEventListener('pointermove', onPointerMove);
+    overlay.addEventListener('pointerup', onPointerUp);
+    overlay.addEventListener('pointercancel', onPointerUp);
+    overlay.addEventListener('pointerleave', onPointerUp);
+
+    const opacity = document.getElementById('opacity');
+    opacity.addEventListener('input', ()=> overlay.style.opacity = opacity.value);
+    const rotate = document.getElementById('rotate');
+    rotate.addEventListener('input', ()=>{ state.rot = parseFloat(rotate.value); apply(); });
+
+    document.getElementById('reset').addEventListener('click', ()=>{
+      state = {x:0,y:0,scale:1,rot:0,originX:0,originY:0,active:false,pointers:new Map(),baseDist:0,baseScale:1};
+      overlay.style.opacity = opacity.value = 0.6; rotate.value = 0; apply();
+    });
+    document.getElementById('flip').addEventListener('click', ()=>{
+      state.rot = -state.rot; overlay.style.transform = `translate(calc(-50% + ${state.x}px), calc(-50% + ${state.y}px)) scale(${state.scale}) rotateY(180deg) rotate(${state.rot}deg)`;
+      setTimeout(()=>apply(), 10);
+    });
+
+    // Avatar controls
+    function hideAvatarControls(){
+      if (unmute) unmute.style.display='none';
+      const toggleBtn = document.getElementById('toggleAvatar');
+      if (toggleBtn) toggleBtn.style.display='none';
+    }
+    avatar.addEventListener('error', ()=>{ hideAvatarControls(); }, { once: true });
+    avatar.muted = true;
+    avatar.play().then(()=>{}).catch(()=>{});
+    document.getElementById('toggleAvatar').addEventListener('click', ()=>{
+      if(avatar.paused){ avatar.play(); event.target.textContent='Pause Avatar'; }
+      else { avatar.pause(); event.target.textContent='Play Avatar'; }
+    });
+    unmute.addEventListener('click', ()=>{
+      avatar.muted = false; avatar.play().then(()=> unmute.style.display='none').catch(()=>{});
+    });
+
+    async function loadConfig(){
+      const res = await fetch('config.json');
+      if(!res.ok) throw new Error('Cannot load config.json');
+      return res.json();
+    }
+    function getParam(name){
+      const url = new URL(location.href); return url.searchParams.get(name);
+    }
+    function populatePicker(stops){
+      const picker = document.getElementById('picker');
+      const select = document.getElementById('siteSelect');
+      select.innerHTML='';
+      Object.entries(stops).forEach(([key, s])=>{
+        const opt = document.createElement('option');
+        opt.value = key; opt.textContent = `${s.title} (${key})`;
+        select.appendChild(opt);
+      });
+      picker.style.display='flex';
+      document.getElementById('pickerCancel').onclick = ()=> picker.style.display='none';
+      document.getElementById('pickerGo').onclick = ()=>{
+        const chosen = select.value; location.search = `?site=${encodeURIComponent(chosen)}`;
+      };
+    }
+    function applySite(key, data){
+      overlay.src = data.files.overlay;
+      sponsorLogo.src = data.files.sponsor_logo;
+      document.getElementById('src_webm').src = data.files.avatar_alpha_webm;
+      document.getElementById('src_mov').src  = data.files.avatar_alpha_mov;
+      document.getElementById('src_mp4').src  = data.files.avatar_mp4;
+      avatar.poster = data.files.avatar_poster;
+      avatar.load(); avatar.play().catch(()=>{});
+
+      vantageSpan.textContent = ' ' + (data.vantage_hint || '');
+      donate.href = data.donate_url || '#';
+      sponsorAbout.href = data.sponsor_about_url || '#';
+      document.title = `${data.title} — PRHS Then & Now`;
+    }
+    (async ()=>{
+      try{
+        const cfg = await loadConfig();
+        const key = getParam('site');
+        if(!key || !cfg.stops[key]){
+          populatePicker(cfg.stops);
+          return;
+        }
+        applySite(key, cfg.stops[key]);
+      }catch(err){
+        console.error(err);
+        showError('Failed to load the tour configuration.');
+      }
+    })();
+
+    if ('wakeLock' in navigator) {
+      let lock; const request=()=>navigator.wakeLock.request('screen').then(l=>lock=l).catch(()=>{});
+      document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && !lock) request(); });
+      request();
+    }
+  </script>
+</body>
+</html>
