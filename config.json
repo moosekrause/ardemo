@@ -4,7 +4,7 @@
       "title": "Pickwick Theatre",
       "donate_url": "https://example.org/donate",
       "sponsor_about_url": "https://example.org/sponsor/about",
-      "vantage_hint": "Stand on the brass dot near the curb and try 2\u00d7 zoom for best alignment.",
+      "vantage_hint": "Stand on the brass dot near the curb and try 2× zoom for best alignment.",
       "files": {
         "overlay": "assets/stops/pickwick/overlay.jpg",
         "sponsor_logo": "assets/stops/pickwick/sponsor_logo.png",
@@ -13,12 +13,12 @@
         "avatar_alpha_mov": "assets/stops/pickwick/sponsor_avatar_alpha.mov",
         "avatar_mp4": "assets/stops/pickwick/sponsor_avatar.mp4"
       }
-      {
+    },
     "solomon": {
       "title": "Solomon Cottage",
       "donate_url": "https://example.org/donate",
       "sponsor_about_url": "https://example.org/sponsor/about",
-      "vantage_hint": "Stand on the brass dot near the curb and try 2\u00d7 zoom for best alignment.",
+      "vantage_hint": "Stand on the brass dot near the curb and try 2× zoom for best alignment.",
       "files": {
         "overlay": "assets/stops/solomon/overlay.jpg",
         "sponsor_logo": "assets/stops/solomon/sponsor_logo.png",
@@ -32,7 +32,7 @@
       "title": "Hodges Park",
       "donate_url": "https://example.org/donate",
       "sponsor_about_url": "https://example.org/sponsor/about",
-      "vantage_hint": "Face City Hall from the center path marker; align to the fa\u00e7ade arches.",
+      "vantage_hint": "Face City Hall from the center path marker; align to the façade arches.",
       "files": {
         "overlay": "assets/stops/hodges/overlay.jpg",
         "sponsor_logo": "assets/stops/hodges/sponsor_logo.png",
