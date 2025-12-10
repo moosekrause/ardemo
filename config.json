@@ -13,6 +13,20 @@
         "avatar_alpha_mov": "assets/stops/pickwick/sponsor_avatar_alpha.mov",
         "avatar_mp4": "assets/stops/pickwick/sponsor_avatar.mp4"
       }
+      {
+    "solomon": {
+      "title": "Solomon Cottage",
+      "donate_url": "https://example.org/donate",
+      "sponsor_about_url": "https://example.org/sponsor/about",
+      "vantage_hint": "Stand on the brass dot near the curb and try 2\u00d7 zoom for best alignment.",
+      "files": {
+        "overlay": "assets/stops/solomon/overlay.jpg",
+        "sponsor_logo": "assets/stops/solomon/sponsor_logo.png",
+        "avatar_poster": "assets/stops/solomon/avatar_poster.png",
+        "avatar_alpha_webm": "assets/stops/solomon/sponsor_avatar_alpha.webm",
+        "avatar_alpha_mov": "assets/stops/solomon/sponsor_avatar_alpha.mov",
+        "avatar_mp4": "assets/stops/solomon/sponsor_avatar.mp4"
+      }
     },
     "hodges": {
       "title": "Hodges Park",
