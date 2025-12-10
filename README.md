@@ -10,6 +10,7 @@ Single page, many sites: open `tour.html?site=pickwick` (or hodges, depot, libra
   - `…/tour.html?site=depot`
   - `…/tour.html?site=library`
   - `…/tour.html?site=pantry`
+  - `…/tour.html?site=solomon`
 
 ## QRs
 Print one QR per stop to its URL. Use error correction **H** and print the short URL under the code.
